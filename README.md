@@ -14,18 +14,25 @@ Visual Studio 2022 Community Edition was used to build this utility.
 
 # Instructions
 
-The "Refresh" button is used to update the list box with available COM ports, so you don't have to restart the utility if you plug in your cable later.
+## Backing up the SPI flash
 
 The "Backup SPI" button is used to make a backup of the 4MBytes SPI flash on the RT-890.
 It is recommended to do this step before flashing any OEFW firmware on your radio as it can be easily restored later.
+Boot your RT-890 as you normally would, make sure the progamming cable plug is pushed all the way in.
+If you have problems with the "Failed to open port" unplug the cable from your PC, and plug it in again.
+
+### Activating 19200 baud mode
 If you have transfer reliability issues, you may want to use the 19200 baud mode.
-You can activate this by holding the Side1 key before powering on your radio. Please the the 19200 baud mode is not available in bootloader mode.
+You can activate this by holding the Side1 key before powering on your radio. Please note the 19200 baud mode is not available in bootloader mode.
+
+The "Refresh" button is used to update the list box with available COM ports, so you don't have to restart the utility if you plug in your cable later.
+
+## Flashing the firmware
+**Press and hold the Side1 and Side2 keys before turning on your radio** to enable update more.
+The green LED will be on when this is done correctly.
 
 Use the "Pick FW" button to select your firmware file.
-
 The "Flash" button is used to flash the selected firmware file to your radio.
-Press and hold the Side1 and Side2 keys before turning on your radio to enable update more.
-The green LED will be on when this is done correctly.
 The firmware file is reloaded every time the "Flash" button is clicked.
 
 If the file is a full size binary (60416 bytes), the radio will automatically reboot.
