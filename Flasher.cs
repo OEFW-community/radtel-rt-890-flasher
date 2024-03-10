@@ -35,6 +35,7 @@ namespace RT_890_Flasher {
 		bool IsLogMode;
 		bool IsAutoUart;
 		bool IsFirstTime;
+		bool isFastMode;
 		AutoResetEvent ResetEvent = new AutoResetEvent(false);
 
 		private void PopulateSerialBox()
@@ -49,7 +50,7 @@ namespace RT_890_Flasher {
 		private bool OpenComPort(string ComPort, bool IsBootloader = true)
 		{
 			try {
-				Radio.Open(ComPort, (IsBootloader || FastButton.Checked) ? 115200 : 19200);
+				Radio.Open(ComPort, (IsBootloader || SpeedMode.SelectedText == "115200") ? 115200 : 19200);
 			} catch {
 				return false;
 			}
@@ -65,9 +66,11 @@ namespace RT_890_Flasher {
 
 			PopulateSerialBox();
 
-			FastButton.Checked = true;
+			SpeedMode.SelectedIndex = 0;
+			isFastMode = true;
 
-			FlashWorker = new BackgroundWorker();
+
+            FlashWorker = new BackgroundWorker();
 			FlashWorker.DoWork += FlashWorker_DoWork;
 			FlashWorker.WorkerReportsProgress = true;
 			FlashWorker.WorkerSupportsCancellation = true;
@@ -271,7 +274,6 @@ namespace RT_890_Flasher {
 		private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
 			Progress.Value = e.ProgressPercentage;
-			Progress.Refresh();
 		}
 
 		private void FlashWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -345,8 +347,7 @@ namespace RT_890_Flasher {
 			if (IsLogMode) {
 				RefreshButton.Enabled = false;
 				ComPorts.Enabled = false;
-				FastButton.Enabled = false;
-				SlowButton.Enabled = false;
+				SpeedMode.Enabled = false;
 				AutoUART.Enabled = false;
 				PickButton.Enabled = false;
 				FlashButton.Enabled = false;
@@ -357,9 +358,8 @@ namespace RT_890_Flasher {
 			} else if (IsFlashMode) {
 				RefreshButton.Enabled = false;
 				ComPorts.Enabled = false;
-				FastButton.Enabled = false;
-				SlowButton.Enabled = false;
-				AutoUART.Enabled = false;
+                SpeedMode.Enabled = false;
+                AutoUART.Enabled = false;
 				PickButton.Enabled = false;
 				BackupButton.Enabled = false;
 				EraseButton.Enabled = false;
@@ -369,9 +369,8 @@ namespace RT_890_Flasher {
 			} else if (IsBackupMode) {
 				RefreshButton.Enabled = false;
 				ComPorts.Enabled = false;
-				FastButton.Enabled = false;
-				SlowButton.Enabled = false;
-				AutoUART.Enabled = false;
+                SpeedMode.Enabled = false;
+                AutoUART.Enabled = false;
 				PickButton.Enabled = false;
 				FlashButton.Enabled = false;
 				EraseButton.Enabled = false;
@@ -381,9 +380,8 @@ namespace RT_890_Flasher {
 			} else {
 				RefreshButton.Enabled = true;
 				ComPorts.Enabled = true;
-				FastButton.Enabled = true;
-				SlowButton.Enabled = true;
-				AutoUART.Enabled = true;
+                SpeedMode.Enabled = true;
+                AutoUART.Enabled = true;
 				PickButton.Enabled = true;
 				FlashButton.Text = "&Flash";
 				FlashButton.ForeColor = System.Drawing.Color.Black;
@@ -411,18 +409,16 @@ namespace RT_890_Flasher {
 			IsAutoUart = AutoUART.Checked;
 		}
 
-		private void FastButton_CheckedChanged(object sender, EventArgs e)
+		private void SpeedMode_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			SlowButton.Checked = !FastButton.Checked;
-		}
+			isFastMode = !isFastMode;
+			if (IsFirstTime && isFastMode == false)
+			{
+                IsFirstTime = false;
+                MessageBox.Show("Press and hold Side Key 1 before turning your radio!", "Information");
+            }
+        }
 
-		private void SlowButton_CheckedChanged(object sender, EventArgs e)
-		{
-			FastButton.Checked = !SlowButton.Checked;
-			if (IsFirstTime && SlowButton.Checked) {
-				IsFirstTime = false;
-				MessageBox.Show("Press and hold Side Key 1 before turning your radio!", "Information");
-			}
-		}
-	}
+
+    }
 }
